@@ -59,12 +59,14 @@ Ext.define('Ext.ux.ColumnAutoWidthPlugin', {
 	this.suspendAutoSize = true;
     },
     resume: function(refresh){
+         console.log("resume");
         this.suspendAutoSize = false;
         if ( refresh ) this.viewChangeDT.delay(300);
     },
     onColumnChange: function(ct, column) {
+        console.log("onColumnChange");
         if( this.suspendAutoSize ) return;
-        console.log('ColumnAutoWidthPlugin','onColumnChange');
+//        console.log('ColumnAutoWidthPlugin','onColumnChange');
         if ( column.autoWidth ) this.doAutoSize([column]); 
     },
     onViewChange: function() {
@@ -93,7 +95,8 @@ Ext.define('Ext.ux.ColumnAutoWidthPlugin', {
         return out;
     },
     getTableResizers: function() {
-        var els = this.grid.getView().getEl().query( '.' + Ext.baseCSSPrefix + 'grid-table-resizer');
+        //var els = this.grid.getView().getEl().query( '.' + Ext.baseCSSPrefix + 'grid-table-resizer');
+        var els = this.grid.getView().getEl().query( '.' + Ext.baseCSSPrefix + 'grid-table');
     
         // Grouping feature - first table wraps everything and can be ignored
         if (els.length > 1 && Ext.fly(els[0]).contains(els[1])) {
@@ -122,6 +125,7 @@ Ext.define('Ext.ux.ColumnAutoWidthPlugin', {
         return 0;
     },
     doAutoSize: function( resizeCols ){
+//         console.log("doAutoSize columnautowidth plugin");
         var me = this,
             view = me.grid.getView();
             
@@ -138,24 +142,24 @@ Ext.define('Ext.ux.ColumnAutoWidthPlugin', {
             Ext.each( tableResizers , function(el) {
                 el = Ext.fly(el).addCls( squishCls );
             });
-            // console.log('ColumnAutoWidthPlugin','autofy table resizers took', 0-start + (start = new Date().getTime()), 'ms');
+//             console.log('ColumnAutoWidthPlugin','autofy table resizers took', 0-start + (start = new Date().getTime()), 'ms');
             
             // no further dom changes beyond this point - to avoid reflows
             
-            // console.log('ColumnAutoWidthPlugin','autofy column resizers took', 0-start + (start = new Date().getTime()), 'ms');
+//             console.log('ColumnAutoWidthPlugin','autofy column resizers took', 0-start + (start = new Date().getTime()), 'ms');
             
             Ext.each(resizeCols, function(col){
-                var els = me.getColumnResizers(col), newWidth = 0;
+                var lCampos = me.grid.getView().getEl().query( 'td.' + Ext.baseCSSPrefix + 'grid-cell-' + col.getId());
+                //var els = me.getColumnResizers(col), 
+                var newWidth = 0;
                 
                 if( col.el ) newWidth = Ext.num(col.el.dom.scrollWidth,0);
-                
-                Ext.each(els, function(el) {
+                Ext.each(lCampos, function(el) {
                     newWidth = Math.max(el.scrollWidth, newWidth); // scrollwidth should be cheaper
                 });
                 
                 newWidth = Math.max( newWidth , col.minAutoWidth || 0 );
                 if( col.maxAutoWidth ) newWidth = Math.min(col.maxAutoWidth, newWidth );
-                
                 if( newWidth == col.width ){
                     //
                 } else if( col.el ){
@@ -165,7 +169,7 @@ Ext.define('Ext.ux.ColumnAutoWidthPlugin', {
                 }
             });
             
-            // console.log('ColumnAutoWidthPlugin','measure and set took', 0-start + (start = new Date().getTime()), 'ms');
+//             console.log('ColumnAutoWidthPlugin','measure and set took', 0-start + (start = new Date().getTime()), 'ms');
             
             // put the table resizers back how you found them
             
@@ -173,11 +177,11 @@ Ext.define('Ext.ux.ColumnAutoWidthPlugin', {
             Ext.each( tableResizers , function(el) {
                 el = Ext.fly(el).removeCls( squishCls );
             });
-            //console.log('ColumnAutoWidthPlugin','restore table layout took', 0-start + (start = new Date().getTime()), 'ms');
+//            console.log('ColumnAutoWidthPlugin','restore table layout took', 0-start + (start = new Date().getTime()), 'ms');
         });
         
         restoreScroll();
-        console.log('ColumnAutoWidthPlugin','doAutoSize took', 0-start + (start = new Date().getTime()), 'ms');
+//        console.log('ColumnAutoWidthPlugin','doAutoSize took', 0-start + (start = new Date().getTime()), 'ms');
         
     }
     
