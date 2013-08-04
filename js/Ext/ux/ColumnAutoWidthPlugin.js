@@ -59,12 +59,10 @@ Ext.define('Ext.ux.ColumnAutoWidthPlugin', {
 	this.suspendAutoSize = true;
     },
     resume: function(refresh){
-         console.log("resume");
         this.suspendAutoSize = false;
         if ( refresh ) this.viewChangeDT.delay(300);
     },
     onColumnChange: function(ct, column) {
-        console.log("onColumnChange");
         if( this.suspendAutoSize ) return;
 //        console.log('ColumnAutoWidthPlugin','onColumnChange');
         if ( column.autoWidth ) this.doAutoSize([column]); 
